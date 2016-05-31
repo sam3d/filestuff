@@ -95,6 +95,10 @@ header .window .toolbar {
     background-color: #E0E0E0;
 }
 
+header .window .toolbar a {
+    color: #151515;
+}
+
 header .window .toolbar .address {
     background-color: #FFF;
     display: inline-block;
@@ -104,6 +108,10 @@ header .window .toolbar .address {
     box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.2);
     margin: 10px 0;
     font-size: 14px;
+}
+
+header .window .toolbar .address:hover {
+    color: #75BFAA;
 }
 
 section.stats {
