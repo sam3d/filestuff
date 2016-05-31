@@ -3,6 +3,7 @@
   "main": "server.js",
   "dependencies": {
     "bower": "^1.7.9",
+    "bytes": "^2.3.0",
     "ejs": "^2.4.2",
     "express": "^4.13.4"
   },
