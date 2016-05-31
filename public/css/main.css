@@ -1,11 +1,11 @@
 /*Import required fonts*/
-@import url(https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
 @import url(https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,400italic,500,500italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=Architects+Daughter);
 
 body {
     font-family: "Ubuntu", sans-serif;
-    /*background-color: #202020;*/
+    background-color: #202020;
 }
 
 .wrapper-full {
@@ -165,4 +165,30 @@ section.content p {
     color: #303030;
     padding-left: 38px;
     margin-top: 15px;
+}
+
+/*Footer content*/
+footer {
+    background-color: #202020;
+    padding: 50px;
+    text-align: center;
+    color: #F5F5F5;
+    font-weight: 300;
+    font-size: 14px;
+}
+
+footer p {
+    width: 500px;
+    margin: 0 auto;
+}
+
+footer h3 {
+    font-family: "Architects Daughter", sans-serif;
+    color: #75BFAA;
+}
+
+footer img {
+    margin-top: 15px;
+    width: 180px;
+    height: auto;
 }
