@@ -42,6 +42,12 @@ app.get("/:filesize/:filename", function(req, res){
     var filesize = req.params.filesize;
     var filename = req.params.filename;
 
+    // Handle end of connection
+    var connectionEnded = false;
+    req.on("end", err => {
+        connectionEnded = true;
+    });
+
     // Attempt to parse the size
     var contentsize = bytes.parse(filesize);
 
@@ -64,6 +70,9 @@ app.get("/:filesize/:filename", function(req, res){
 
         // Loop over the packets
         for (var i = 0; i < Math.ceil(contentsize / packetsize); i++) {
+
+            if (connectionEnded)
+                break;
 
             if (remaining < packetsize) {
 
