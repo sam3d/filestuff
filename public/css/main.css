@@ -192,3 +192,8 @@ footer img {
     width: 180px;
     height: auto;
 }
+
+footer a:hover {
+    text-decoration: underline;
+    color: #75BFAA;
+}
