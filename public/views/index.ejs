@@ -23,7 +23,7 @@
                 <div class="logo"></div>
                 <h1>filestuff</h1>
                 <div class="version">BETA</div>
-                <h2>Super simple API for downloading test files of <a href="#">any size</a> and <a href="#">any type</a>!</h2>
+                <h2>Super simple API for downloading test files of <a href="#how">any size</a> and <a href="#how">any type</a>!</h2>
             </div>
 
             <div class="window">
@@ -51,14 +51,14 @@
 
         <section class="content"><div class="wrapper-full">
 
-            <h1><i class="fa fa-map-o"></i>What is this?</h1>
+            <h1 id="what"><i class="fa fa-map-o"></i>What is this?</h1>
             <p>After getting bored with the lack of easy to use test file download websites, I decided to create my own! I firmly believe in a dead simple interface that does one thing and does it well. Thus, filestuff was born. It's still in beta so there may be some bugs and glitches, but for the most part it should be pretty stable!</p>
 
-            <h1><i class="fa fa-hand-paper-o"></i>How do I use it?</h1>
+            <h1 id="how"><i class="fa fa-hand-paper-o"></i>How do I use it?</h1>
             <p>Currently, the only way to use this application is to make a <code>get</code> request to <code>https://filestuff.xyz</code> followed to two url parameters. The anatomy of a general request is <code>https://filestuff.xyz/{filesize}/{filename}</code>. The <code>filesize</code> parameter can be any size value that can be interpreted and converted to a number of bytes (such as <code>15MB</code>, <code>4.5GB</code> &amp; <code>550kb</code>). The <code>filename</code> parameter can be anything that you want, as the response header is set to <code>Content-Type: application/octet-stream</code> the browser will always download it regardless of extension.</p>
             <p>At present, the API sends the data as a byte stream composed entirely of <code>0</code>'s. In future, this is likely to be configurable to contain random data or even generate random psuedo-data depending on the file extension provided in the URL. We'll have to see how we go :)</p>
 
-            <h1><i class="fa fa-file-text-o"></i>Terms of use</h1>
+            <h1 id="terms"><i class="fa fa-file-text-o"></i>Terms of use</h1>
         </div></section>
 
         <footer><div class="wrapper-full">
