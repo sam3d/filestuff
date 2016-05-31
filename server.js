@@ -2,6 +2,18 @@
 var express = require("express");
 var app = express();
 var bytes = require("bytes");
+var numeral = require("numeral");
+var low = require("lowdb");
+
+// Database setup
+var db = low(process.env.STORAGE || "db.json");
+db.defaults({
+    stats: {
+        downloads: 0,
+        speed: 0,
+        transfer: 0
+    }
+}).value();
 
 // Configuration
 var port = process.env.PORT || 8080;
@@ -14,7 +26,13 @@ app.use(express.static(__dirname + "/public"));
 
 // Primary routes
 app.get("/", function(req, res){
-    res.render("index");
+    res.render("index", {
+        stats: {
+            downloads: numeral(db.get("stats.downloads").value()).format("0,0"),
+            speed: bytes(db.get("stats.speed").value()) + "/s",
+            transfer: bytes(db.get("stats.transfer").value())
+        }
+    });
 });
 
 // Primary API route
