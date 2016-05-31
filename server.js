@@ -17,7 +17,7 @@ db.defaults({
 
 // Configuration
 var port = process.env.PORT || 8080;
-var packetsize = 200;
+var packetsize = 4000;
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/public/views");
 
