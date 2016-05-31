@@ -25,10 +25,10 @@ app.get("/:filesize/:filename", function(req, res){
     var filename = req.params.filename;
 
     // Attempt to parse the size
-    var buffersize = bytes.parse(filesize);
+    var contentsize = bytes.parse(filesize);
 
     // Make sure valid filesize
-    if (isNaN(buffersize) || buffersize === null) {
+    if (isNaN(contentsize) || contentsize === null) {
 
         res.json({
             success: false,
@@ -39,9 +39,31 @@ app.get("/:filesize/:filename", function(req, res){
 
         // Set the response headers
         res.set("Content-Type", "application/octet-stream");
-        res.set("Content-Length", buffersize);
+        res.set("Content-Length", contentsize);
 
-        // Send the file
+        // The remaining data to send
+        var remaining = contentsize;
+
+        // Loop over the packets
+        for (var i = 0; i < Math.ceil(contentsize / packetsize); i++) {
+
+            if (remaining < packetsize) {
+
+                // There are less packets remaining than the packet size, send just those
+                res.write(Buffer.alloc(remaining));
+
+            } else {
+
+                // Decrement remaining by packet size and send full packet
+                res.write(Buffer.alloc(packetsize));
+                remaining = remaining - packetsize;
+
+            }
+
+        }
+
+        // Terminate the connection
+        res.end();
 
     }
 
