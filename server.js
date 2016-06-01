@@ -17,7 +17,7 @@ db.defaults({
 }).value();
 
 // Configuration
-var packetSize = require("buffer").kMaxLength;
+var packetSize = bytes.parse("500KB"); // require("buffer").kMaxLength;
 var port = process.env.PORT || 8080;
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/public/views");
@@ -65,8 +65,24 @@ app.get("/:filesize/:filename", function(req, res){
 
         // Create stream
         var rs = Stream.Readable();
+
+        // Set remaining
+        rs.remaining = contentSize;
+
+        // When the stream is read
         rs._read = () => {
-            rs.push(Buffer.alloc(packetSize));
+            if (rs.remaining < packetSize) {
+
+                // Push the remaining, set to 0 and finish read
+                rs.push(Buffer.alloc(rs.remaining));
+                rs.remaining = 0;
+                rs.push(null);
+
+            } else {
+                rs.push(Buffer.alloc(packetSize));
+                rs.remaining = rs.remaining - packetSize;
+            }
+
         };
 
         // Pipe output to response
