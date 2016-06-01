@@ -4,6 +4,7 @@ var app = express();
 var bytes = require("bytes");
 var numeral = require("numeral");
 var low = require("lowdb");
+var Stream = require("stream");
 
 // Database setup
 var db = low(process.env.STORAGE || "db.json");
@@ -16,8 +17,8 @@ db.defaults({
 }).value();
 
 // Configuration
+var packetSize = require("buffer").kMaxLength;
 var port = process.env.PORT || 8080;
-var packetsize = 4000;
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/public/views");
 
@@ -39,24 +40,18 @@ app.get("/", function(req, res){
 app.get("/:filesize/:filename", function(req, res){
 
     // Get request parameters
-    var filesize = req.params.filesize;
-    var filename = req.params.filename;
-
-    // Handle end of connection
-    var connectionEnded = false;
-    req.on("end", err => {
-        connectionEnded = true;
-    });
+    var fileSize = req.params.filesize;
+    var fileName = req.params.filename;
 
     // Attempt to parse the size
-    var contentsize = bytes.parse(filesize);
+    var contentSize = bytes.parse(fileSize);
 
     // Make sure valid filesize
-    if (isNaN(contentsize) || contentsize === null) {
+    if (isNaN(contentSize) || contentSize === null) {
 
         res.json({
             success: false,
-            message: "Could not parse the filesize '" + filesize + "' into bytes"
+            message: "Could not parse the filesize '" + fileSize + "' into bytes"
         });
 
     } else {
@@ -66,35 +61,16 @@ app.get("/:filesize/:filename", function(req, res){
 
         // Set the response headers
         res.set("Content-Type", "application/octet-stream");
-        res.set("Content-Length", contentsize);
+        res.set("Content-Length", contentSize);
 
-        // The remaining data to send
-        var remaining = contentsize;
+        // Create stream
+        var rs = Stream.Readable();
+        rs._read = () => {
+            rs.push(Buffer.alloc(packetSize));
+        };
 
-        // Loop over the packets
-        for (var i = 0; i < Math.ceil(contentsize / packetsize); i++) {
-
-            if (connectionEnded)
-                break;
-
-            if (remaining < packetsize) {
-
-                // There are less packets remaining than the packet size, send just those
-                res.write(Buffer.alloc(remaining));
-
-            } else {
-
-                // Decrement remaining by packet size and send full packet
-                res.write(Buffer.alloc(packetsize));
-                remaining = remaining - packetsize;
-
-            }
-
-        }
-
-        // Terminate the connection
-        res.end();
-
+        // Pipe output to response
+        rs.pipe(res);
     }
 
 });
