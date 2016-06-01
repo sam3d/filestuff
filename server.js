@@ -5,6 +5,7 @@ var bytes = require("bytes");
 var numeral = require("numeral");
 var low = require("lowdb");
 var Stream = require("stream");
+var progress = require("progress-stream");
 
 // Database setup
 var db = low(process.env.STORAGE || "db.json");
@@ -69,6 +70,17 @@ app.get("/:filesize/:filename", function(req, res){
         // Set remaining
         rs.remaining = contentSize;
 
+        // Create stream monitor
+        var monitor = progress({
+            length: contentSize,
+            time: 1000
+        });
+
+        // When progress is detected, write the delta to database
+        monitor.on('progress', progress => {
+            db.set("stats.transfer", db.get("stats.transfer").value() + progress.delta).value();
+        });
+
         // When the stream is read
         rs._read = () => {
             if (rs.remaining < packetSize) {
@@ -86,7 +98,7 @@ app.get("/:filesize/:filename", function(req, res){
         };
 
         // Pipe output to response
-        rs.pipe(res);
+        rs.pipe(monitor).pipe(res);
     }
 
 });
