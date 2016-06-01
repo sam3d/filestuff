@@ -61,8 +61,10 @@ app.get("/:filesize/:filename", function(req, res){
         db.set("stats.downloads", db.get("stats.downloads").value() + 1).value();
 
         // Set the response headers
-        res.set("Content-Type", "application/octet-stream");
-        res.set("Content-Length", contentSize);
+        res.writeHead(200, {
+            "Content-Type": "application/octet-stream",
+            "Content-Length": contentSize
+        });
 
         // Create stream
         var rs = Stream.Readable();
