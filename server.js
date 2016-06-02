@@ -73,6 +73,7 @@ app.get("/:filesize/:filename", (req, res) => {
         // Set the response headers
         res.writeHead(200, {
             "Content-Type": "application/octet-stream",
+            "Content-Disposition": "attachment; filename=" + fileName,
             "Content-Length": contentSize
         });
 
