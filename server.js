@@ -123,21 +123,13 @@ app.get("/:filesize/:filename", function(req, res){
         rs.pipe(monitor).pipe(res);
 
         // Additional debugging commands
-        res.on("close", err => {
-            console.log("Response closed");
-        });
+        res.on("close", () => { console.log("Response closed"); });
+        res.on("end", () => { console.log("Response ended"); });
+        req.on("close", () => { console.log("Request closed"); });
+        req.on("end", () => { console.log("Request ended"); });
+        rs.on("end", () => { console.log("Stream ended"); });
+        rs.on("close", () => { console.log("Stream closed"); });
 
-        res.on("end", err => {
-            console.log("Response ended");
-        });
-
-        req.on("close", err => {
-            console.log("Request closed");
-        });
-
-        req.on("end", err => {
-            console.log("Request ended");
-        });
     }
 
 });
