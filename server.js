@@ -14,7 +14,7 @@ db.defaults({
         downloads: 0,
         transfer: 0,
         speed: {
-            cumulative: 500000,
+            total: 500000,
             count: 1
         }
     }
