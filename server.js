@@ -76,11 +76,39 @@ app.get("/:filesize/:filename", function(req, res){
             "Content-Length": contentSize
         });
 
-        // Create stream
-        var rs = Stream.Readable();
+        // Define readable stream class
+        class DataStream extends Stream.Readable {
 
-        // Set remaining
-        rs.remaining = contentSize;
+            // Construct the class
+            constructor(opt) {
+                super(opt);
+                this._remaining = contentSize;
+            }
+
+            // When the class is read
+            _read(size) {
+                if (this._remaining === 0) {
+                    this.push(null);
+                } else {
+                    if (this._remaining < size) {
+
+                        // Push the remaining, set to 0 and finish read
+                        this.push(Buffer.alloc(this._remaining));
+                        this._remaining = 0;
+
+                    } else {
+
+                        // Push the size being requested
+                        this.push(Buffer.alloc(size));
+                        this._remaining = this._remaining - size;
+
+                    }
+                }
+            }
+        }
+
+        // Create new stream
+        var rs = new DataStream();
 
         // Create stream monitor
         var monitor = progress({
@@ -99,25 +127,6 @@ app.get("/:filesize/:filename", function(req, res){
             db.set("stats.speed.total", db.get("stats.speed.total").value() + progress.speed).value();
 
         });
-
-        // When the stream is read
-        rs._read = (size) => {
-            if (rs.remaining < size) {
-
-                // Push the remaining, set to 0 and finish read
-                rs.push(Buffer.alloc(rs.remaining));
-                rs.remaining = 0;
-                rs.push(null);
-
-            } else {
-
-                // Push the size being requested
-                rs.push(Buffer.alloc(size));
-                rs.remaining = rs.remaining - size;
-
-            }
-
-        };
 
         // Pipe output to response
         rs.pipe(monitor).pipe(res);
