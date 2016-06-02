@@ -120,8 +120,6 @@ app.get("/:filesize/:filename", (req, res) => {
         // When progress is detected
         monitor.on('progress', progress => {
 
-            console.log("Transferred: " + bytes(progress.transferred));
-
             // Update statistics
             db.set("stats.transfer", db.get("stats.transfer").value() + progress.delta).value();
             db.set("stats.speed.count", db.get("stats.speed.count").value() + 1).value();
@@ -133,12 +131,12 @@ app.get("/:filesize/:filename", (req, res) => {
         rs.pipe(monitor).pipe(res);
 
         // Additional debugging commands
-        res.on("close", () => { console.log("Response closed"); });
-        res.on("end", () => { console.log("Response ended"); });
-        req.on("close", () => { console.log("Request closed"); });
-        req.on("end", () => { console.log("Request ended"); });
-        rs.on("end", () => { console.log("Stream ended"); });
-        rs.on("close", () => { console.log("Stream closed"); });
+        // res.on("close", () => { console.log("Response closed"); });
+        // res.on("end", () => { console.log("Response ended"); });
+        // req.on("close", () => { console.log("Request closed"); });
+        // req.on("end", () => { console.log("Request ended"); });
+        // rs.on("end", () => { console.log("Stream ended"); });
+        // rs.on("close", () => { console.log("Stream closed"); });
 
     }
 
