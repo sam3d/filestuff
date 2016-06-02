@@ -29,7 +29,7 @@ app.set("views", __dirname + "/public/views");
 app.use(express.static(__dirname + "/public"));
 
 // Primary routes
-app.get("/", function(req, res){
+app.get("/", (req, res) => {
 
     // Get database values
     var downloads = numeral(db.get("stats.downloads").value()).format("0,0");
@@ -48,7 +48,7 @@ app.get("/", function(req, res){
 });
 
 // Primary API route
-app.get("/:filesize/:filename", function(req, res){
+app.get("/:filesize/:filename", (req, res) => {
 
     // Get request parameters
     var fileSize = req.params.filesize;
@@ -143,7 +143,7 @@ app.get("/:filesize/:filename", function(req, res){
 
 });
 
-app.get("*", function(req, res){
+app.get("*", (req, res) => {
     res.redirect("/");
 });
 
