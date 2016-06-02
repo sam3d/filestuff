@@ -113,7 +113,8 @@ app.get("/:filesize/:filename", (req, res) => {
         // Create stream monitor
         var monitor = progress({
             length: contentSize,
-            time: 1000
+            time: 1000,
+            speed: 0
         });
 
         // When progress is detected
