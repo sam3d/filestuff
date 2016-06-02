@@ -12,8 +12,11 @@ var db = low("db.json");
 db.defaults({
     stats: {
         downloads: 0,
-        speed: 0,
-        transfer: 0
+        transfer: 0,
+        speed: {
+            cumulative: 0,
+            count: 0
+        }
     }
 }).value();
 
@@ -27,11 +30,19 @@ app.use(express.static(__dirname + "/public"));
 
 // Primary routes
 app.get("/", function(req, res){
+
+    // Get database values
+    var downloads = numeral(db.get("stats.downloads").value()).format("0,0");
+    var speedTotal = db.get("stats.speed.total").value();
+    var speedCount = db.get("stats.speed.count").value();
+    var speedAverage = bytes(speedTotal / speedCount) + "/s";
+    var transfer = bytes(db.get("stats.transfer").value());
+
     res.render("index", {
         stats: {
-            downloads: numeral(db.get("stats.downloads").value()).format("0,0"),
-            speed: bytes(db.get("stats.speed").value()) + "/s",
-            transfer: bytes(db.get("stats.transfer").value())
+            downloads: downloads,
+            speed: speedAverage,
+            transfer: transfer
         }
     });
 });
@@ -77,9 +88,16 @@ app.get("/:filesize/:filename", function(req, res){
             time: 1000
         });
 
-        // When progress is detected, write the delta to database
+        // When progress is detected
         monitor.on('progress', progress => {
+
+            console.log(progress);
+
+            // Update statistics
             db.set("stats.transfer", db.get("stats.transfer").value() + progress.delta).value();
+            db.set("stats.speed.count", db.get("stats.speed.count").value() + 1).value();
+            db.set("stats.speed.total", db.get("stats.speed.total").value() + progress.speed).value();
+
         });
 
         // When the stream is read
