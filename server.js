@@ -91,7 +91,7 @@ app.get("/:filesize/:filename", function(req, res){
         // When progress is detected
         monitor.on('progress', progress => {
 
-            console.log(progress);
+            console.log("Transferred: " + bytes(progress.transferred));
 
             // Update statistics
             db.set("stats.transfer", db.get("stats.transfer").value() + progress.delta).value();
@@ -121,6 +121,23 @@ app.get("/:filesize/:filename", function(req, res){
 
         // Pipe output to response
         rs.pipe(monitor).pipe(res);
+
+        // Additional debugging commands
+        res.on("close", err => {
+            console.log("Response closed");
+        });
+
+        res.on("end", err => {
+            console.log("Response ended");
+        });
+
+        req.on("close", err => {
+            console.log("Request closed");
+        });
+
+        req.on("end", err => {
+            console.log("Request ended");
+        });
     }
 
 });
