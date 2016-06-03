@@ -8,7 +8,7 @@ var Stream = require("stream");
 var progress = require("progress-stream");
 
 // Database setup
-var db = low("db.json");
+var db = low(__dirname + "/db/low.json");
 db.defaults({
     stats: {
         downloads: 0,
