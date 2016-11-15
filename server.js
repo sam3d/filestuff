@@ -1,6 +1,7 @@
 // Dependencies
 var express = require("express");
 var app = express();
+var path = require("path");
 var bytes = require("bytes");
 var numeral = require("numeral");
 var low = require("lowdb");
@@ -23,7 +24,7 @@ db.defaults({
 // Configuration
 var port = process.env.PORT || 8080;
 app.set("view engine", "ejs");
-app.set("views", __dirname + "/public/views");
+app.set("views", path.join(__dirname, "/views"));
 
 // Middleware
 app.use(express.static(__dirname + "/public"));
